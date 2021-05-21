@@ -1,14 +1,12 @@
 import Todo from './Todo';
 
-const TodoList = ({List, deleteTodo, etatIncremente}) => {
+const TodoList = ({list, deleteTodo, incrementerEtat}) => {
     return (
       <>
-      <h1>Liste des todos :</h1> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        {
-            List.map((item) => <Todo key={item.id} Id={item.id} Titre={item.Titre} Description={item.Description} Etat={item.Etat} date={item.Date} etatIncremente={etatIncremente} deleteTodo={deleteTodo}/>)
-        }
-      </>
-    );
+        <h1>Liste des todos :</h1>
+        { list.map((item) => <Todo key={item.id} id={item.id} titre={item.titre} description={item.description} etat={item.etat} date={item.date} incrementerEtat={incrementerEtat} deleteTodo={deleteTodo}/>) }
+     </>
+    )
 }
 
 export default TodoList;

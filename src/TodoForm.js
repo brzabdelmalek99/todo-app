@@ -3,23 +3,23 @@ import { TextField } from '@material-ui/core'
 
 const TodoForm = ({addTodo}) => {
 
-    const [Titre, setTitre] = useState('')
-    const [Description, setDescription] = useState('')
+    const [titre, setTitre] = useState('')
+    const [description, setDescription] = useState('')
 
     const onSubmit = (e) => {
         e.preventDefault()
 
-        if(!Titre){
+        if(!titre){
             alert("Champs obligatoir")
             return
         }
 
         addTodo(
             {
-                "Titre" : Titre,
-                "Description": Description, 
-                "Etat": 1, 
-                "Date": new Date()
+                titre : titre,
+                description : description, 
+                etat : 1, 
+                date : new Date()
             }
         )
             
@@ -41,7 +41,7 @@ const TodoForm = ({addTodo}) => {
                             </div>
                             <div className="col-6">
                             <TextField 
-                                    value={Titre}
+                                    value={titre}
                                     onChange={(e) => setTitre(e.target.value)}
                                 />
                             </div>
@@ -52,7 +52,7 @@ const TodoForm = ({addTodo}) => {
                             </div>
                             <div className="col-6">
                             <TextField 
-                                    value={Description}
+                                    value={description}
                                     onChange={(e) => setDescription(e.target.value)}
                                 />
                             </div>

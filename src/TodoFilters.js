@@ -1,52 +1,54 @@
-import React, { useState } from "react";
-import {TextField, FormControl, FormGroup, FormControlLabel, Checkbox} from '@material-ui/core'
+import React, { Component } from "react";
+import {TextField, FormGroup, FormControlLabel, Checkbox} from '@material-ui/core'
 
-const TodoFilters = ({rafrechirList}) => {
+class TodoFilters extends Component{
 
-    const [choix, setChoix] = useState({
-        un: true,
-        deux: true,
-        trois: true,
-    });
-
-    const [datedeb, setDatedeb] = useState("")
-    const [datefin, setDatefin] = useState("")
-
-    const onSubmit = (e) => {
-        e.preventDefault()
-        rafrechirList({
-            "un": choix.un,
-            "deux": choix.deux,
-            "trois": choix.trois,
-            "deb": datedeb,
-            "fin": datefin
-        })
+    constructor({rafrechirList}){
+        super()
+        this.state = {
+            nouveau: true,
+            encours: true,
+            terminee: true,
+            datedeb: "",
+            datefin: ""
+        }
     }
 
-    const handleChange = (event) => {
-        setChoix({ ...choix, [event.target.name]: event.target.checked });
+    changeChoix = (event) => {
+        this.setState({ [event.target.name]: event.target.checked })
     };
 
-    return (
+    componentDidUpdate(prevProps, prevState){
+        if(prevState!==this.state){
+            this.props.rafrechirList({
+                nouveau: this.state.nouveau,
+                encours: this.state.encours,
+                terminee: this.state.terminee,
+                datedeb: this.state.datedeb,
+                datefin: this.state.datefin
+            })
+        }
+    }
+
+    render(){
+        return (
         <>
         <h1>Filtrer la liste :</h1>
-        <FormControl component="fieldset">
-          <form onSubmit={onSubmit}>
           <div className="container">
             <div className="row">
-                <div className="span6" style={{width: "18rem", margin: "20px"}}>
+                <div className="span6" style={{width: "18rem", margin: "20px", marginLeft:"50px"}}>
                     <h4>Par Etat :</h4>
                     <FormGroup>
                         <FormControlLabel
-                            control={<Checkbox checked={choix.un} onChange={handleChange} name="un" />}
+                            control={<Checkbox checked={this.state.nouveau} onChange={this.changeChoix} name="nouveau" />}
                             label="Nouvelles"
                         />
                         <FormControlLabel
-                            control={<Checkbox checked={choix.deux} onChange={handleChange} name="deux" />}
+                            control={<Checkbox checked={this.state.encours} onChange={this.changeChoix} name="encours" />}
                             label="En cours"
                         />
                         <FormControlLabel
-                            control={<Checkbox checked={choix.trois} onChange={handleChange} name="trois" />}
+                            control={<Checkbox checked={this.state.terminee} onChange={this.changeChoix} name="terminee" />}
                             label="Terminées"
                         />
                     </FormGroup>
@@ -59,7 +61,7 @@ const TodoFilters = ({rafrechirList}) => {
                                 <p>Date de debut :</p>
                             </div>
                             <div className="col-6">
-                                <TextField type='Date' value={datedeb} onChange={(e) => setDatedeb(e.target.value)} />
+                                <TextField type='Date' value={this.state.datedeb} onChange={(e) => {this.setState({ datedeb : e.target.value })}} />
                             </div>
                         </div>
                         <div className="row" style={{alignContent: "center", marginTop:"10px"}}>
@@ -67,18 +69,16 @@ const TodoFilters = ({rafrechirList}) => {
                                 <p>Date de fin :</p>
                             </div>
                             <div className="col-6">
-                                <TextField type='Date' value={datefin} onChange={(e) => setDatefin(e.target.value)} />
+                                <TextField type='Date' value={this.state.datefin} onChange={(e) => {this.setState({ datefin : e.target.value })}} />
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <input type='submit' value='Enregistrer' className='btn btn-success' style={{width: "100%"}}/>
           </div>
-          </form>
-        </FormControl>
         </>
       );
+    }
 }
 
 export default TodoFilters

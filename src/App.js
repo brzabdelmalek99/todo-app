@@ -10,13 +10,13 @@ class App extends Component {
   constructor(){
     super()
     this.state = {
-      maListe : [],
-      maListeAvecFiltre : []
+      list : [],
+      listFiltered : []
     }
   }
 
   componentDidMount(){
-    this.getTodos().then(res => this.setState({ maListe: res, maListeAvecFiltre: res}))
+    this.getTodos().then(res => {this.setState({ list: res, listFiltered: res})})
   }
 
   getTodos = async () => {
@@ -44,21 +44,21 @@ class App extends Component {
 
     this.setState(
       {
-        maListe: [...this.state.maListe, data],
-        maListeAvecFiltre: [...this.state.maListeAvecFiltre, data]
+        list: [...this.state.list, data],
+        listFiltered: [...this.state.listFiltered, data]
       }
     )
   }
 
-  etatIncremente = async (id) => {
+  incrementerEtat = async (id) => {
     const todo = await this.getTodo(id)
-    if(todo.Etat===3){
+    if(todo.etat===3){
       return
     }
 
     const newTodo = {
         ...todo,
-        Etat: todo.Etat+1
+        etat: todo.etat+1
     }
 
     fetch (`http://localhost:5000/todos/${id}`,
@@ -73,25 +73,25 @@ class App extends Component {
     .then(data => data)
     
     this.setState({ 
-      maListe: (this.state.maListe.filter((todo) => todo.id === id ? {...todo, Etat: todo.Etat++} : todo))
+      listFiltered: (this.state.list.filter((todo) => todo.id === id ? {...todo, etat: todo.etat++} : todo))
     })
   }
 
   deleteTodo = async (id) => {
     fetch(`http://localhost:5000/todos/${id}`,{method: 'DELETE'})
     .then(res => this.setState({ 
-      maListe: (this.state.maListe.filter((todo) => todo.id !== id)),
-      maListeAvecFiltre: (this.state.maListeAvecFiltre.filter((todo) => todo.id !== id)) 
+      list: (this.state.list.filter((todo) => todo.id !== id)),
+      listFiltered: (this.state.listFiltered.filter((todo) => todo.id !== id)) 
     }))
   }
 
   rafrechirList = (recherche) => {
-    const choix = ["un","deux","trois"]
+    const choix = ["nouveau","encours","terminee"]
     this.setState({ 
-      maListeAvecFiltre: (this.state.maListe.filter((todo) => 
-        (recherche[choix[todo.Etat-1]]) 
-        && (((new Date(todo.Date)) >= (new Date(recherche.deb))) || recherche.deb === "") 
-        && (((new Date(todo.Date)) <= (new Date(recherche.fin))) || recherche.fin === "")   
+      listFiltered: (this.state.list.filter((todo) => 
+        ( recherche[choix[todo.etat-1]] ) 
+        && (((new Date(todo.date)) >= (new Date(recherche.datedeb))) || recherche.datedeb === "") 
+        && (((new Date(todo.date)) <= (new Date(recherche.datefin))) || recherche.datefin === "")   
       )) 
     })
   }
@@ -107,13 +107,18 @@ class App extends Component {
             <TodoFilters rafrechirList={this.rafrechirList}/>
           </div>
         </div>
-        <div className="row">
-          <TodoStats/>
-        </div>
-        <div className="row">
-            {this.state.maListeAvecFiltre.length === 0 && <center><h6 style={{marginTop:"30px"}}>Oops, pas de données, (ralonger vos filtres)</h6></center> }
-            {this.state.maListeAvecFiltre.length !== 0 && <TodoList List={this.state.maListeAvecFiltre} deleteTodo={this.deleteTodo} etatIncremente={this.etatIncremente}/>}
-        </div>
+        {this.state.listFiltered.length === 0 && <center>
+        <h1 style={{marginTop:"30px"}}>Oops, pas de données, (ralongez vos filtres)</h1></center> }
+        {this.state.listFiltered.length !== 0 && 
+        <>
+          <div className="row">
+            <TodoStats data={this.state.listFiltered} />
+          </div>
+          <div className="row">
+            <TodoList list={this.state.listFiltered} deleteTodo={this.deleteTodo} incrementerEtat={this.incrementerEtat}/>
+          </div>
+        </>
+        }
       </div>
     )
   }
